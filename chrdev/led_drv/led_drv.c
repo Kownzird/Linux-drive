@@ -7,12 +7,12 @@
 #include <linux/uaccess.h>
 #include <linux/device.h>
 #include <linux/io.h>
-//1.¶¨ÒåÒ»¸öcdev
+//1.å®šä¹‰ä¸€ä¸ªcdev
 static struct cdev gec6818_led_cdev;
 
-static unsigned int led_major = 100; //Ö÷Éè±¸ºÅ
-static unsigned int led_minor = 0; //´ÎÉè±¸ºÅ
-static dev_t  led_num; //Éè±¸ºÅ
+static unsigned int led_major = 100; //ä¸»è®¾å¤‡å·
+static unsigned int led_minor = 0; //æ¬¡è®¾å¤‡å·
+static dev_t  led_num; //è®¾å¤‡å·
 
 static struct class * leds_class;
 static struct device *leds_device;
@@ -25,27 +25,27 @@ static void __iomem *gpiocaltfn0_va;//0x20
 static void __iomem *gpiocaltfn1_va;//0x24
 static void __iomem *gpiocpad_va;//0x18
 
-//2¡¢¶¨ÒåÒ»¸öÎÄ¼ş²Ù×÷¼¯£¬²¢³õÊ¼»¯
+//2ã€å®šä¹‰ä¸€ä¸ªæ–‡ä»¶æ“ä½œé›†ï¼Œå¹¶åˆå§‹åŒ–
 int gec6818_led_open(struct inode *inode, struct file *filp)
 {
 	printk("led driver openning\n");
 	return 0;
 }
 
-//Ó¦ÓÃ³ÌĞòwrite()-->ÏµÍ³µ÷ÓÃ-->Çı¶¯³ÌĞògec6818_led_write()
-//¶¨ÒåÒ»¸öÊı¾İ¸ñÊ½£º
-//					user_buf[3]--->D11µÄ×´Ì¬£º1--µÆÁÁ£¬ 0--µÆÃğ
-//					user_buf[2]--->D10µÄ×´Ì¬£º1--µÆÁÁ£¬ 0--µÆÃğ
-//					user_buf[1]--->D9µÄ×´Ì¬£º1--µÆÁÁ£¬ 0--µÆÃğ
-//                  user_buf[0]--->D8µÄ×´Ì¬£º1--µÆÁÁ£¬ 0--µÆÃğ
+//åº”ç”¨ç¨‹åºwrite()-->ç³»ç»Ÿè°ƒç”¨-->é©±åŠ¨ç¨‹åºgec6818_led_write()
+//å®šä¹‰ä¸€ä¸ªæ•°æ®æ ¼å¼ï¼š
+//					user_buf[3]--->D11çš„çŠ¶æ€ï¼š1--ç¯äº®ï¼Œ 0--ç¯ç­
+//					user_buf[2]--->D10çš„çŠ¶æ€ï¼š1--ç¯äº®ï¼Œ 0--ç¯ç­
+//					user_buf[1]--->D9çš„çŠ¶æ€ï¼š1--ç¯äº®ï¼Œ 0--ç¯ç­
+//                  			user_buf[0]--->D8çš„çŠ¶æ€ï¼š1--ç¯äº®ï¼Œ 0--ç¯ç­
 ssize_t gec6818_led_read(struct file *filp, char __user *user_buf, size_t size, loff_t *off)
 {
-	//½«Çı¶¯³ÌĞòµÄÊı¾İ·¢ËÍ¸øÓ¦ÓÃ³ÌĞò£¬Õâ¸öÊı¾İ´ú±íLEDµÄ×´Ì¬<---gpiocout_va
+	//å°†é©±åŠ¨ç¨‹åºçš„æ•°æ®å‘é€ç»™åº”ç”¨ç¨‹åºï¼Œè¿™ä¸ªæ•°æ®ä»£è¡¨LEDçš„çŠ¶æ€<---gpiocout_va
 	char kbuf[4];
 	int ret;
 	if(size != 4)
 		return -EINVAL;
-	//Í¨¹ı¶ÁÈ¡¼Ä´æÆ÷µÄ×´Ì¬£¬µÃµ½Ã¿¸öLEDµÄ×´Ì¬-->kbuf[4]
+	//é€šè¿‡è¯»å–å¯„å­˜å™¨çš„çŠ¶æ€ï¼Œå¾—åˆ°æ¯ä¸ªLEDçš„çŠ¶æ€-->kbuf[4]
 	//kbuf[4]=?????
 	ret = copy_to_user(user_buf,kbuf,size);
 	if(ret != 0)
@@ -53,19 +53,19 @@ ssize_t gec6818_led_read(struct file *filp, char __user *user_buf, size_t size, 
 	return size;
 }
 
-//Ó¦ÓÃ³ÌĞòwrite()-->ÏµÍ³µ÷ÓÃ-->Çı¶¯³ÌĞògec6818_led_write()
-//const char __user *user_buf ---->Ó¦ÓÃ³ÌĞòĞ´ÏÂÀ´µÄÊı¾İ
-//size_t size --->Ó¦ÓÃ³ÌĞòĞ´ÏÂÀ´µÄÊı¾İ´óĞ¡
-//¶¨ÒåÒ»¸öÊı¾İ¸ñÊ½£ºuser_buf[1]--->LEDµÄµÆºÅ£º8/9/10/11
-//                  user_buf[0]--->LEDµÄ×´Ì¬£º1--µÆÁÁ£¬ 0--µÆÃğ
+//åº”ç”¨ç¨‹åºwrite()-->ç³»ç»Ÿè°ƒç”¨-->é©±åŠ¨ç¨‹åºgec6818_led_write()
+//const char __user *user_buf ---->åº”ç”¨ç¨‹åºå†™ä¸‹æ¥çš„æ•°æ®
+//size_t size --->åº”ç”¨ç¨‹åºå†™ä¸‹æ¥çš„æ•°æ®å¤§å°
+//å®šä¹‰ä¸€ä¸ªæ•°æ®æ ¼å¼ï¼šuser_buf[1]--->LEDçš„ç¯å·ï¼š8/9/10/11
+//                  user_buf[0]--->LEDçš„çŠ¶æ€ï¼š1--ç¯äº®ï¼Œ 0--ç¯ç­
 ssize_t gec6818_led_write(struct file *filp, const char __user *user_buf, size_t size, loff_t *off)
 {
-	//½ÓÊÕÓÃ»§Ğ´ÏÂÀ´µÄÊı¾İ£¬²¢ÀûÓÃÕâĞ©Êı¾İÀ´¿ØÖÆLEDµÆ¡£
+	//æ¥æ”¶ç”¨æˆ·å†™ä¸‹æ¥çš„æ•°æ®ï¼Œå¹¶åˆ©ç”¨è¿™äº›æ•°æ®æ¥æ§åˆ¶LEDç¯ã€‚
 	char kbuf[2];
 	int ret;
 	if(size != 2)
 		return -EINVAL;
-	ret = copy_from_user(kbuf, user_buf, size);//µÃµ½ÓÃ»§¿Õ¼äµÄÊı¾İ
+	ret = copy_from_user(kbuf, user_buf, size);//å¾—åˆ°ç”¨æˆ·ç©ºé—´çš„æ•°æ®
 	if(ret != 0)
 		return -EFAULT;
 	switch(kbuf[1]){
@@ -119,11 +119,11 @@ static const struct file_operations gec6818_led_fops = {
 	.release = gec6818_led_release,
 };
 
-//Èë¿Úº¯Êı--->°²×°Çı¶¯
+//å…¥å£å‡½æ•°--->å®‰è£…é©±åŠ¨
 static int __init gec6818_led_init(void)
 {
 	int ret;
-	//3¡¢ÉêÇëÉè±¸ºÅ
+	//3ã€ç”³è¯·è®¾å¤‡å·
 	if(led_major == 0)
 		ret = alloc_chrdev_region(&led_num, led_minor, 1, "led_device");
 	else {
@@ -135,10 +135,10 @@ static int __init gec6818_led_init(void)
 		return ret;		
 	}
 	
-	//4.×Ö·ûÉè±¸µÄ³õÊ¼»¯
+	//4.å­—ç¬¦è®¾å¤‡çš„åˆå§‹åŒ–
 	cdev_init(&gec6818_led_cdev, &gec6818_led_fops);
 	
-	//5.½«×Ö·ûÉè±¸¼ÓÈëÄÚºË
+	//5.å°†å­—ç¬¦è®¾å¤‡åŠ å…¥å†…æ ¸
 	ret = cdev_add(&gec6818_led_cdev, led_num, 1);
 	if(ret < 0){
 		printk("can not add cdev \n");
@@ -146,7 +146,7 @@ static int __init gec6818_led_init(void)
 		return ret;		
 	}
 	
-	//6. ´´½¨class
+	//6. åˆ›å»ºclass
 	leds_class = class_create(THIS_MODULE, "gec210_leds");
 	if(leds_class == NULL){
 		printk("class create error\n");
@@ -155,7 +155,7 @@ static int __init gec6818_led_init(void)
 		return -EBUSY;
 	}
 	
-	//7.´´½¨device
+	//7.åˆ›å»ºdevice
 	leds_device = device_create(leds_class,NULL,led_num, NULL, "led_drv");
 	if(leds_device == NULL){
 		printk("device create error\n");
@@ -166,7 +166,7 @@ static int __init gec6818_led_init(void)
 		return -EBUSY;
 	}
 	
-	//8ÉêÇëÎïÀíÄÚ´æÇø
+	//8ç”³è¯·ç‰©ç†å†…å­˜åŒº
 	leds_res = request_mem_region(0xC001C000, 0x1000,"GPIOC_MEM");
 	if(leds_res == NULL){
 		printk("request memory error\n");
@@ -178,7 +178,7 @@ static int __init gec6818_led_init(void)
 		return -EBUSY;
 	}
 	
-	//9.IOÄÚ´æ¶¯Ì¬Ó³Éä£¬µÃµ½ÎïÀíµØÖ·¶ÔÓ¦µÄĞéÄâµØÖ·
+	//9.IOå†…å­˜åŠ¨æ€æ˜ å°„ï¼Œå¾—åˆ°ç‰©ç†åœ°å€å¯¹åº”çš„è™šæ‹Ÿåœ°å€
 	gpioc_base_va = ioremap(0xC001C000, 0x1000);
 	if(gpioc_base_va == NULL){
 		printk("ioremap error\n");
@@ -190,7 +190,7 @@ static int __init gec6818_led_init(void)
 		
 		return -EBUSY;
 	}
-	//µÃµ½Ã¿¸ö¼Ä´æÆ÷µÄĞéÄâµØÖ·
+	//å¾—åˆ°æ¯ä¸ªå¯„å­˜å™¨çš„è™šæ‹Ÿåœ°å€
 	gpiocout_va = gpioc_base_va + 0x00;
 	gpiocoutenb_va = gpioc_base_va + 0x04;
 	gpiocaltfn0_va = gpioc_base_va + 0x20;
@@ -199,15 +199,15 @@ static int __init gec6818_led_init(void)
 
 	printk("gpiocout_va = %p,gpiocpad_va=%p\n",gpiocout_va, gpiocpad_va);
 	
-	//10.·ÃÎÊĞéÄâµØÖ·
-	//10.1 GPIOC7,8.12,17 --->function1,×÷ÎªÆÕÍ¨µÄGPIO
+	//10.è®¿é—®è™šæ‹Ÿåœ°å€
+	//10.1 GPIOC7,8.12,17 --->function1,ä½œä¸ºæ™®é€šçš„GPIO
 	*(unsigned int *)gpiocaltfn0_va &=~((3<<14)|(3<<16)|(3<<24));
 	*(unsigned int *)gpiocaltfn1_va &=~(3<<2);
 	*(unsigned int *)gpiocaltfn0_va |= ((1<<14)|(1<<16)|(1<<24));
 	*(unsigned int *)gpiocaltfn1_va |= (1<<2);
-	//10.2 GPIOC7,8.12,17 --->ÉèÖÃÎªÊä³ö
+	//10.2 GPIOC7,8.12,17 --->è®¾ç½®ä¸ºè¾“å‡º
 	*(unsigned int *)gpiocoutenb_va |= ((1<<7)|(1<<8)|(1<<12)|(1<<17));
-	//10.3 GPIOC7,8.12,17 --->ÉèÖÃÎªÊä³ö¸ßµçÆ½£¬D8~D11 off
+	//10.3 GPIOC7,8.12,17 --->è®¾ç½®ä¸ºè¾“å‡ºé«˜ç”µå¹³ï¼ŒD8~D11 off
 	*(unsigned int *)gpiocout_va |= ((1<<7)|(1<<8)|(1<<12)|(1<<17));
 	
 	
@@ -216,7 +216,7 @@ static int __init gec6818_led_init(void)
 	return 0;
 }
 
-//³ö¿Úº¯Êı--->Ğ¶ÔØÇı¶¯
+//å‡ºå£å‡½æ•°--->å¸è½½é©±åŠ¨
 static void __exit gec6818_led_exit(void)
 {
 	iounmap(gpioc_base_va);
@@ -229,12 +229,12 @@ static void __exit gec6818_led_exit(void)
 	printk("<4>" "gec6818 led driver exit \n");
 }
 
-//Çı¶¯³ÌĞòµÄÈë¿Ú£º#insmod led_drv.ko -->module_init()-->gec6818_led_init()
+//é©±åŠ¨ç¨‹åºçš„å…¥å£ï¼š#insmod led_drv.ko -->module_init()-->gec6818_led_init()
 module_init(gec6818_led_init);
-//Çı¶¯³ÌĞòµÄ³ö¿Ú£º#rmmod led_drv.ko --->module_exit()-->gec6818_led_exit()
+//é©±åŠ¨ç¨‹åºçš„å‡ºå£ï¼š#rmmod led_drv.ko --->module_exit()-->gec6818_led_exit()
 module_exit(gec6818_led_exit);
 
-//moduleµÄÃèÊö¡£#modinfo led_drv.ko
+//moduleçš„æè¿°ã€‚#modinfo led_drv.ko
 MODULE_AUTHOR("bobeyfeng@163.com");
 MODULE_DESCRIPTION("LED driver for GEC6818");
 MODULE_LICENSE("GPL");

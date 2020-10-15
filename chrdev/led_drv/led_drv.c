@@ -32,7 +32,7 @@ int gec6818_led_open(struct inode *inode, struct file *filp)
 	return 0;
 }
 
-//应用程序write()-->系统调用-->驱动程序gec6818_led_write()
+//应用程序read()-->系统调用-->驱动程序gec6818_led_read()
 //定义一个数据格式：
 //					user_buf[3]--->D11的状态：1--灯亮， 0--灯灭
 //					user_buf[2]--->D10的状态：1--灯亮， 0--灯灭

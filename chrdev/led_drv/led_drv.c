@@ -38,7 +38,7 @@ int gec6818_led_open(struct inode *inode, struct file *filp)
 //					user_buf[2]--->D10的状态：1--灯亮， 0--灯灭
 //					user_buf[1]--->D9的状态：1--灯亮， 0--灯灭
 //                  			user_buf[0]--->D8的状态：1--灯亮， 0--灯灭
-ssize_t gec6818_led_read(struct file *filp, char __user *user_buf, size_t size, loff_t *off)
+size_t gec6818_led_read(struct file *filp, char __user *user_buf, size_t size, loff_t *off)
 {
 	//将驱动程序的数据发送给应用程序，这个数据代表LED的状态<---gpiocout_va
 	char kbuf[4];
@@ -46,7 +46,10 @@ ssize_t gec6818_led_read(struct file *filp, char __user *user_buf, size_t size, 
 	if(size != 4)
 		return -EINVAL;
 	//通过读取寄存器的状态，得到每个LED的状态-->kbuf[4]
-	//kbuf[4]=?????
+	kbuf[0]=(char)(~readl(gpiocout_va)>>17)&0x01;//D8
+	kbuf[1]=(char)(~readl(gpiocout_va)>>8)&0x01;//D9
+	kbuf[2]=(char)(~readl(gpiocout_va)>>7)&0x01;//D10
+	kbuf[3]=(char)(~readl(gpiocout_va)>>12)&0x01;//D11
 	ret = copy_to_user(user_buf,kbuf,size);
 	if(ret != 0)
 		return -EFAULT;

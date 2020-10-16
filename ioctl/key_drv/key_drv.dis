@@ -1,0 +1,674 @@
+
+key_drv.ko:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <gec6818_key_open>:
+//const char __user *user_buf ---->应用程序写下来的数据
+//size_t size --->应用程序写下来的数据大小
+//定义一个数据格式：user_buf[0]--->beep的状态：1--beep on， 0--beep off
+int gec6818_key_open(struct inode *inode, struct file *filp)
+{
+	printk("key9 driver openning\n");
+   0:	e3000000 	movw	r0, #0
+//应用程序write()-->系统调用-->驱动程序gec6818_beep_write()
+//const char __user *user_buf ---->应用程序写下来的数据
+//size_t size --->应用程序写下来的数据大小
+//定义一个数据格式：user_buf[0]--->beep的状态：1--beep on， 0--beep off
+int gec6818_key_open(struct inode *inode, struct file *filp)
+{
+   4:	e92d4008 	push	{r3, lr}
+	printk("key9 driver openning\n");
+   8:	e3400000 	movt	r0, #0
+   c:	ebfffffe 	bl	0 <printk>
+	return 0;
+}
+  10:	e3a00000 	mov	r0, #0
+  14:	e8bd8008 	pop	{r3, pc}
+
+00000018 <gec6818_key_release>:
+//定义一个数据格式：user_buf[0]--->beep的状态：1--beep on， 0--beep off
+
+
+int gec6818_key_release(struct inode *inode, struct file *filp)
+{
+	printk("beep driver closing\n");
+  18:	e3000000 	movw	r0, #0
+//size_t size --->应用程序写下来的数据大小
+//定义一个数据格式：user_buf[0]--->beep的状态：1--beep on， 0--beep off
+
+
+int gec6818_key_release(struct inode *inode, struct file *filp)
+{
+  1c:	e92d4008 	push	{r3, lr}
+	printk("beep driver closing\n");
+  20:	e3400000 	movt	r0, #0
+  24:	ebfffffe 	bl	0 <printk>
+	return 0;
+}
+  28:	e3a00000 	mov	r0, #0
+  2c:	e8bd8008 	pop	{r3, pc}
+
+00000030 <gec6818_key_ioctl>:
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+  30:	e3043b01 	movw	r3, #19201	; 0x4b01
+	return 0;
+}
+
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+  34:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+  38:	e3483004 	movt	r3, #32772	; 0x8004
+	return 0;
+}
+
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+  3c:	e24dd014 	sub	sp, sp, #20
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+  40:	e1510003 	cmp	r1, r3
+}
+
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+	int key9_flag=0,ret;
+  44:	e3a0c000 	mov	ip, #0
+		ret = copy_to_user(p_user, &key9_flag, sizeof(int));
+		if(ret != 0)
+			return -EFAULT;
+		break;
+	default:
+		return -ENOIOCTLCMD;		
+  48:	130f0dfd 	movwne	r0, #65021	; 0xfdfd
+}
+
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+	int key9_flag=0,ret;
+  4c:	e58dc00c 	str	ip, [sp, #12]
+		ret = copy_to_user(p_user, &key9_flag, sizeof(int));
+		if(ret != 0)
+			return -EFAULT;
+		break;
+	default:
+		return -ENOIOCTLCMD;		
+  50:	134f0fff 	movtne	r0, #65535	; 0xffff
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+  54:	0a000001 	beq	60 <gec6818_key_ioctl+0x30>
+	default:
+		return -ENOIOCTLCMD;		
+	}	
+			
+	return 0;
+}
+  58:	e28dd014 	add	sp, sp, #20
+  5c:	e49df004 	pop	{pc}		; (ldr pc, [sp], #4)
+{
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+	case GEC6818_KEY_READ:	
+		key9_flag = (readl(gpiobpad_va)>>9) & 0x01;
+  60:	e3003000 	movw	r3, #0
+  64:	e3403000 	movt	r3, #0
+  68:	e5933000 	ldr	r3, [r3]
+  6c:	e5933000 	ldr	r3, [r3]
+  70:	f57ff04f 	dsb	sy
+		printk("key_flag = %d\n",key9_flag);
+  74:	e3000000 	movw	r0, #0
+{
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+	case GEC6818_KEY_READ:	
+		key9_flag = (readl(gpiobpad_va)>>9) & 0x01;
+  78:	e7e034d3 	ubfx	r3, r3, #9, #1
+		printk("key_flag = %d\n",key9_flag);
+  7c:	e58d2004 	str	r2, [sp, #4]
+  80:	e1a01003 	mov	r1, r3
+  84:	e3400000 	movt	r0, #0
+{
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+	case GEC6818_KEY_READ:	
+		key9_flag = (readl(gpiobpad_va)>>9) & 0x01;
+  88:	e58d300c 	str	r3, [sp, #12]
+		printk("key_flag = %d\n",key9_flag);
+  8c:	ebfffffe 	bl	0 <printk>
+static inline struct thread_info *current_thread_info(void) __attribute_const__;
+
+static inline struct thread_info *current_thread_info(void)
+{
+	register unsigned long sp asm ("sp");
+	return (struct thread_info *)(sp & ~(THREAD_SIZE - 1));
+  90:	e1a0100d 	mov	r1, sp
+	return n;
+}
+
+static inline unsigned long __must_check copy_to_user(void __user *to, const void *from, unsigned long n)
+{
+	if (access_ok(VERIFY_WRITE, to, n))
+  94:	e59d2004 	ldr	r2, [sp, #4]
+  98:	e3c13d7f 	bic	r3, r1, #8128	; 0x1fc0
+  9c:	e3c3303f 	bic	r3, r3, #63	; 0x3f
+  a0:	e5933008 	ldr	r3, [r3, #8]
+  a4:	e2921004 	adds	r1, r2, #4
+  a8:	30d11003 	sbcscc	r1, r1, r3
+  ac:	33a03000 	movcc	r3, #0
+  b0:	e3530000 	cmp	r3, #0
+  b4:	0a000001 	beq	c0 <gec6818_key_ioctl+0x90>
+		ret = copy_to_user(p_user, &key9_flag, sizeof(int));
+		if(ret != 0)
+			return -EFAULT;
+  b8:	e3e0000d 	mvn	r0, #13
+  bc:	eaffffe5 	b	58 <gec6818_key_ioctl+0x28>
+		n = __copy_to_user(to, from, n);
+  c0:	e1a00002 	mov	r0, r2
+  c4:	e28d100c 	add	r1, sp, #12
+  c8:	e3a02004 	mov	r2, #4
+  cc:	ebfffffe 	bl	0 <__copy_to_user>
+	switch(cmd){
+	case GEC6818_KEY_READ:	
+		key9_flag = (readl(gpiobpad_va)>>9) & 0x01;
+		printk("key_flag = %d\n",key9_flag);
+		ret = copy_to_user(p_user, &key9_flag, sizeof(int));
+		if(ret != 0)
+  d0:	e3500000 	cmp	r0, #0
+  d4:	0affffdf 	beq	58 <gec6818_key_ioctl+0x28>
+  d8:	eafffff6 	b	b8 <gec6818_key_ioctl+0x88>
+
+Disassembly of section .init.text:
+
+00000000 <init_module>:
+//const char __user *user_buf ---->应用程序写下来的数据
+//size_t size --->应用程序写下来的数据大小
+//定义一个数据格式：user_buf[0]--->beep的状态：1--beep on， 0--beep off
+int gec6818_key_open(struct inode *inode, struct file *filp)
+{
+	printk("key9 driver openning\n");
+   0:	e92d4070 	push	{r4, r5, r6, lr}
+//应用程序write()-->系统调用-->驱动程序gec6818_beep_write()
+//const char __user *user_buf ---->应用程序写下来的数据
+//size_t size --->应用程序写下来的数据大小
+//定义一个数据格式：user_buf[0]--->beep的状态：1--beep on， 0--beep off
+int gec6818_key_open(struct inode *inode, struct file *filp)
+{
+   4:	e3004000 	movw	r4, #0
+	printk("key9 driver openning\n");
+   8:	e3003000 	movw	r3, #0
+   c:	e3404000 	movt	r4, #0
+	return 0;
+}
+  10:	e24dd008 	sub	sp, sp, #8
+  14:	e3403000 	movt	r3, #0
+//定义一个数据格式：user_buf[0]--->beep的状态：1--beep on， 0--beep off
+
+
+int gec6818_key_release(struct inode *inode, struct file *filp)
+{
+	printk("beep driver closing\n");
+  18:	e2840004 	add	r0, r4, #4
+//size_t size --->应用程序写下来的数据大小
+//定义一个数据格式：user_buf[0]--->beep的状态：1--beep on， 0--beep off
+
+
+int gec6818_key_release(struct inode *inode, struct file *filp)
+{
+  1c:	e3a01000 	mov	r1, #0
+	printk("beep driver closing\n");
+  20:	e3a02001 	mov	r2, #1
+  24:	ebfffffe 	bl	0 <alloc_chrdev_region>
+	return 0;
+}
+  28:	e2505000 	subs	r5, r0, #0
+  2c:	aa000004 	bge	44 <init_module+0x44>
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+  30:	e3000000 	movw	r0, #0
+	return 0;
+}
+
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+  34:	e3400000 	movt	r0, #0
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+  38:	ebfffffe 	bl	0 <printk>
+	return 0;
+}
+
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+  3c:	e1a00005 	mov	r0, r5
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+  40:	ea000075 	b	21c <init_module+0x21c>
+}
+
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+	int key9_flag=0,ret;
+  44:	e3001000 	movw	r1, #0
+		ret = copy_to_user(p_user, &key9_flag, sizeof(int));
+		if(ret != 0)
+			return -EFAULT;
+		break;
+	default:
+		return -ENOIOCTLCMD;		
+  48:	e2840008 	add	r0, r4, #8
+}
+
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+	int key9_flag=0,ret;
+  4c:	e3401000 	movt	r1, #0
+		ret = copy_to_user(p_user, &key9_flag, sizeof(int));
+		if(ret != 0)
+			return -EFAULT;
+		break;
+	default:
+		return -ENOIOCTLCMD;		
+  50:	ebfffffe 	bl	0 <cdev_init>
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+  54:	e2840008 	add	r0, r4, #8
+	default:
+		return -ENOIOCTLCMD;		
+	}	
+			
+	return 0;
+}
+  58:	e5941004 	ldr	r1, [r4, #4]
+  5c:	e3a02001 	mov	r2, #1
+{
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+	case GEC6818_KEY_READ:	
+		key9_flag = (readl(gpiobpad_va)>>9) & 0x01;
+  60:	ebfffffe 	bl	0 <cdev_add>
+  64:	e2505000 	subs	r5, r0, #0
+  68:	aa000007 	bge	8c <init_module+0x8c>
+  6c:	e3000000 	movw	r0, #0
+  70:	e3400000 	movt	r0, #0
+		printk("key_flag = %d\n",key9_flag);
+  74:	ebfffffe 	bl	0 <printk>
+{
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+	case GEC6818_KEY_READ:	
+		key9_flag = (readl(gpiobpad_va)>>9) & 0x01;
+  78:	e5940004 	ldr	r0, [r4, #4]
+		printk("key_flag = %d\n",key9_flag);
+  7c:	e3a01001 	mov	r1, #1
+  80:	ebfffffe 	bl	0 <unregister_chrdev_region>
+  84:	e1a00005 	mov	r0, r5
+{
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+	case GEC6818_KEY_READ:	
+		key9_flag = (readl(gpiobpad_va)>>9) & 0x01;
+  88:	ea000063 	b	21c <init_module+0x21c>
+		printk("key_flag = %d\n",key9_flag);
+  8c:	e3000000 	movw	r0, #0
+  90:	e3001000 	movw	r1, #0
+	return n;
+}
+
+static inline unsigned long __must_check copy_to_user(void __user *to, const void *from, unsigned long n)
+{
+	if (access_ok(VERIFY_WRITE, to, n))
+  94:	e3400000 	movt	r0, #0
+  98:	e3401000 	movt	r1, #0
+  9c:	e2842044 	add	r2, r4, #68	; 0x44
+  a0:	ebfffffe 	bl	0 <__class_create>
+  a4:	e3500000 	cmp	r0, #0
+  a8:	e5840044 	str	r0, [r4, #68]	; 0x44
+  ac:	1a000009 	bne	d8 <init_module+0xd8>
+  b0:	e3000000 	movw	r0, #0
+  b4:	e3400000 	movt	r0, #0
+		ret = copy_to_user(p_user, &key9_flag, sizeof(int));
+		if(ret != 0)
+			return -EFAULT;
+  b8:	ebfffffe 	bl	0 <printk>
+  bc:	e5940004 	ldr	r0, [r4, #4]
+		n = __copy_to_user(to, from, n);
+  c0:	e3a01001 	mov	r1, #1
+  c4:	ebfffffe 	bl	0 <unregister_chrdev_region>
+  c8:	e2840008 	add	r0, r4, #8
+  cc:	ebfffffe 	bl	0 <cdev_del>
+	switch(cmd){
+	case GEC6818_KEY_READ:	
+		key9_flag = (readl(gpiobpad_va)>>9) & 0x01;
+		printk("key_flag = %d\n",key9_flag);
+		ret = copy_to_user(p_user, &key9_flag, sizeof(int));
+		if(ret != 0)
+  d0:	e3e0000f 	mvn	r0, #15
+  d4:	ea000050 	b	21c <init_module+0x21c>
+  d8:	e300c000 	movw	ip, #0
+	.release = gec6818_key_release
+};
+
+//入口函数--->安装驱动
+static int __init gec6818_key_init(void)
+{
+  dc:	e3a01000 	mov	r1, #0
+	int ret;
+	//3、申请设备号
+	if(key_major == 0)
+		ret = alloc_chrdev_region(&key_num, key_minor, 1, "key_device");
+  e0:	e5942004 	ldr	r2, [r4, #4]
+  e4:	e340c000 	movt	ip, #0
+  e8:	e1a03001 	mov	r3, r1
+	.release = gec6818_key_release
+};
+
+//入口函数--->安装驱动
+static int __init gec6818_key_init(void)
+{
+  ec:	e58dc000 	str	ip, [sp]
+	int ret;
+	//3、申请设备号
+	if(key_major == 0)
+		ret = alloc_chrdev_region(&key_num, key_minor, 1, "key_device");
+  f0:	ebfffffe 	bl	0 <device_create>
+  f4:	e3500000 	cmp	r0, #0
+  f8:	e5840048 	str	r0, [r4, #72]	; 0x48
+  fc:	1a000003 	bne	110 <init_module+0x110>
+ 100:	e3000000 	movw	r0, #0
+	else {
+		key_num = MKDEV(key_major, key_minor);
+		ret = register_chrdev_region(key_num, 1, "key_device");
+	}
+	if(ret < 0){
+ 104:	e3400000 	movt	r0, #0
+ 108:	ebfffffe 	bl	0 <printk>
+		printk("can not get a device number \n");
+ 10c:	ea000012 	b	15c <init_module+0x15c>
+ 110:	e3a05000 	mov	r5, #0
+ 114:	e3000000 	movw	r0, #0
+		return ret;		
+ 118:	e3a01a0b 	mov	r1, #45056	; 0xb000
+ 11c:	e3003000 	movw	r3, #0
+	}
+	
+	//4.字符设备的初始化
+	cdev_init(&gec6818_key_cdev, &gec6818_key_fops);
+ 120:	e58d5000 	str	r5, [sp]
+ 124:	e3400000 	movt	r0, #0
+ 128:	e34c1001 	movt	r1, #49153	; 0xc001
+ 12c:	e3403000 	movt	r3, #0
+	
+	//5.将字符设备加入内核
+	ret = cdev_add(&gec6818_key_cdev, key_num, 1);
+ 130:	e3a02a01 	mov	r2, #4096	; 0x1000
+ 134:	ebfffffe 	bl	0 <__request_region>
+ 138:	e1500005 	cmp	r0, r5
+ 13c:	e584004c 	str	r0, [r4, #76]	; 0x4c
+	if(ret < 0){
+ 140:	1a00000e 	bne	180 <init_module+0x180>
+ 144:	e3000000 	movw	r0, #0
+		printk("can not add cdev \n");
+ 148:	e3400000 	movt	r0, #0
+ 14c:	ebfffffe 	bl	0 <printk>
+ 150:	e5940044 	ldr	r0, [r4, #68]	; 0x44
+		unregister_chrdev_region(key_num, 1);
+ 154:	e5941004 	ldr	r1, [r4, #4]
+ 158:	ebfffffe 	bl	0 <device_destroy>
+ 15c:	e5940044 	ldr	r0, [r4, #68]	; 0x44
+		return ret;		
+ 160:	ebfffffe 	bl	0 <class_destroy>
+ 164:	e2840008 	add	r0, r4, #8
+	}
+	
+	//6. 创建class
+	keys_class = class_create(THIS_MODULE, "gec210_keys");
+ 168:	ebfffffe 	bl	0 <cdev_del>
+ 16c:	e5940004 	ldr	r0, [r4, #4]
+ 170:	e3a01001 	mov	r1, #1
+ 174:	ebfffffe 	bl	0 <unregister_chrdev_region>
+ 178:	e3e0000f 	mvn	r0, #15
+ 17c:	ea000026 	b	21c <init_module+0x21c>
+	if(keys_class == NULL){
+ 180:	e3a00a0b 	mov	r0, #45056	; 0xb000
+		unregister_chrdev_region(key_num, 1);
+		return ret;		
+	}
+	
+	//6. 创建class
+	keys_class = class_create(THIS_MODULE, "gec210_keys");
+ 184:	e3a01a01 	mov	r1, #4096	; 0x1000
+	if(keys_class == NULL){
+ 188:	e34c0001 	movt	r0, #49153	; 0xc001
+		printk("class create error\n");
+ 18c:	e1a02005 	mov	r2, r5
+ 190:	ebfffffe 	bl	0 <__arm_ioremap>
+ 194:	e3500000 	cmp	r0, #0
+		unregister_chrdev_region(key_num, 1);
+ 198:	e1a03000 	mov	r3, r0
+ 19c:	e5840050 	str	r0, [r4, #80]	; 0x50
+ 1a0:	1a000009 	bne	1cc <init_module+0x1cc>
+		cdev_del(&gec6818_key_cdev);
+ 1a4:	e3000000 	movw	r0, #0
+ 1a8:	e3400000 	movt	r0, #0
+		return -EBUSY;
+ 1ac:	ebfffffe 	bl	0 <printk>
+ 1b0:	e3000000 	movw	r0, #0
+	}
+	
+	//7.创建device
+	keys_device = device_create(keys_class,NULL,key_num, NULL, "key_drv");
+ 1b4:	e3a01a0b 	mov	r1, #45056	; 0xb000
+ 1b8:	e3400000 	movt	r0, #0
+ 1bc:	e34c1001 	movt	r1, #49153	; 0xc001
+ 1c0:	e3a02a01 	mov	r2, #4096	; 0x1000
+ 1c4:	ebfffffe 	bl	0 <__release_region>
+ 1c8:	eaffffe0 	b	150 <init_module+0x150>
+ 1cc:	e590e020 	ldr	lr, [r0, #32]
+	if(keys_device == NULL){
+ 1d0:	e2801020 	add	r1, r0, #32
+		cdev_del(&gec6818_key_cdev);
+		return -EBUSY;
+	}
+	
+	//7.创建device
+	keys_device = device_create(keys_class,NULL,key_num, NULL, "key_drv");
+ 1d4:	e2806004 	add	r6, r0, #4
+	if(keys_device == NULL){
+ 1d8:	e590c004 	ldr	ip, [r0, #4]
+		printk("device create error\n");
+ 1dc:	e3000000 	movw	r0, #0
+ 1e0:	e5843054 	str	r3, [r4, #84]	; 0x54
+ 1e4:	e5942000 	ldr	r2, [r4]
+ 1e8:	e584105c 	str	r1, [r4, #92]	; 0x5c
+		
+		return -EBUSY;
+	}
+	
+	//8申请物理内存区
+	keys_res = request_mem_region(0xC001B000, 0x1000,"GPIOB_MEM");
+ 1ec:	e3400000 	movt	r0, #0
+ 1f0:	e5846058 	str	r6, [r4, #88]	; 0x58
+ 1f4:	e3cee703 	bic	lr, lr, #786432	; 0xc0000
+ 1f8:	e3cccc02 	bic	ip, ip, #512	; 0x200
+ 1fc:	e2821024 	add	r1, r2, #36	; 0x24
+ 200:	e2822018 	add	r2, r2, #24
+ 204:	e583e020 	str	lr, [r3, #32]
+ 208:	e583c004 	str	ip, [r3, #4]
+ 20c:	e5841060 	str	r1, [r4, #96]	; 0x60
+ 210:	e5842000 	str	r2, [r4]
+	if(keys_res == NULL){
+ 214:	ebfffffe 	bl	0 <printk>
+		
+		return -EBUSY;
+	}
+	
+	//8申请物理内存区
+	keys_res = request_mem_region(0xC001B000, 0x1000,"GPIOB_MEM");
+ 218:	e1a00005 	mov	r0, r5
+	if(keys_res == NULL){
+ 21c:	e28dd008 	add	sp, sp, #8
+		printk("request memory error\n");
+ 220:	e8bd8070 	pop	{r4, r5, r6, pc}
+
+Disassembly of section .exit.text:
+
+00000000 <cleanup_module>:
+//const char __user *user_buf ---->应用程序写下来的数据
+//size_t size --->应用程序写下来的数据大小
+//定义一个数据格式：user_buf[0]--->beep的状态：1--beep on， 0--beep off
+int gec6818_key_open(struct inode *inode, struct file *filp)
+{
+	printk("key9 driver openning\n");
+   0:	e92d4010 	push	{r4, lr}
+//应用程序write()-->系统调用-->驱动程序gec6818_beep_write()
+//const char __user *user_buf ---->应用程序写下来的数据
+//size_t size --->应用程序写下来的数据大小
+//定义一个数据格式：user_buf[0]--->beep的状态：1--beep on， 0--beep off
+int gec6818_key_open(struct inode *inode, struct file *filp)
+{
+   4:	e3004000 	movw	r4, #0
+	printk("key9 driver openning\n");
+   8:	e3404000 	movt	r4, #0
+   c:	e5940050 	ldr	r0, [r4, #80]	; 0x50
+	return 0;
+}
+  10:	ebfffffe 	bl	0 <__arm_iounmap>
+  14:	e3000000 	movw	r0, #0
+//定义一个数据格式：user_buf[0]--->beep的状态：1--beep on， 0--beep off
+
+
+int gec6818_key_release(struct inode *inode, struct file *filp)
+{
+	printk("beep driver closing\n");
+  18:	e3a01a0b 	mov	r1, #45056	; 0xb000
+//size_t size --->应用程序写下来的数据大小
+//定义一个数据格式：user_buf[0]--->beep的状态：1--beep on， 0--beep off
+
+
+int gec6818_key_release(struct inode *inode, struct file *filp)
+{
+  1c:	e3a02a01 	mov	r2, #4096	; 0x1000
+	printk("beep driver closing\n");
+  20:	e3400000 	movt	r0, #0
+  24:	e34c1001 	movt	r1, #49153	; 0xc001
+	return 0;
+}
+  28:	ebfffffe 	bl	0 <__release_region>
+  2c:	e5941004 	ldr	r1, [r4, #4]
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+  30:	e5940044 	ldr	r0, [r4, #68]	; 0x44
+	return 0;
+}
+
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+  34:	ebfffffe 	bl	0 <device_destroy>
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+  38:	e5940044 	ldr	r0, [r4, #68]	; 0x44
+	return 0;
+}
+
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+  3c:	ebfffffe 	bl	0 <class_destroy>
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+  40:	e2840008 	add	r0, r4, #8
+}
+
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+	int key9_flag=0,ret;
+  44:	ebfffffe 	bl	0 <cdev_del>
+		ret = copy_to_user(p_user, &key9_flag, sizeof(int));
+		if(ret != 0)
+			return -EFAULT;
+		break;
+	default:
+		return -ENOIOCTLCMD;		
+  48:	e5940004 	ldr	r0, [r4, #4]
+}
+
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+	int key9_flag=0,ret;
+  4c:	e3a01001 	mov	r1, #1
+		ret = copy_to_user(p_user, &key9_flag, sizeof(int));
+		if(ret != 0)
+			return -EFAULT;
+		break;
+	default:
+		return -ENOIOCTLCMD;		
+  50:	ebfffffe 	bl	0 <unregister_chrdev_region>
+
+static long gec6818_key_ioctl(struct file *filp, unsigned int cmd, unsigned long args)
+{
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+  54:	e3000000 	movw	r0, #0
+	default:
+		return -ENOIOCTLCMD;		
+	}	
+			
+	return 0;
+}
+  58:	e8bd4010 	pop	{r4, lr}
+  5c:	e3400000 	movt	r0, #0
+{
+	int key9_flag=0,ret;
+	unsigned int __user *p_user = (unsigned int *)args;
+	switch(cmd){
+	case GEC6818_KEY_READ:	
+		key9_flag = (readl(gpiobpad_va)>>9) & 0x01;
+  60:	eafffffe 	b	0 <printk>
